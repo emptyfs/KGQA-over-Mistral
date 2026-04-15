@@ -20,12 +20,14 @@ logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 # load LLM and embeddings model
 llm = LlamaCPP(
-    model_path='./models/Mistral-7B-Instruct-v0.3.Q2_K.gguf',
-    #model_path='./models/DeepSeek-R1-Distill-Qwen-7B-Q6_K.gguf',
+    model_path='./data/models/Mistral-7B-Instruct-v0.3.Q2_K.gguf',
     temperature=0.1,
     max_new_tokens=2000,
     context_window=4096,
-    model_kwargs={"n_gpu_layers": -1},
+    model_kwargs={
+        "n_threads": 8,    # укажите количество физических ядер вашего процессора
+        "n_batch": 512     # размер пакета для обработки
+    },
     verbose=True
 )
 embed_model = HuggingFaceEmbedding()
@@ -47,13 +49,13 @@ graph_store = Neo4jPropertyGraphStore(
 
 try:
     # attempt to load index from file and graph from database
-    gstorage_context = StorageContext.from_defaults(persist_dir='./storage_n4')
+    gstorage_context = StorageContext.from_defaults(persist_dir='./data/storage_n4')
     kg_index = PropertyGraphIndex.from_existing(property_graph_store=graph_store)
 except FileNotFoundError as e:
     gstorage_context = StorageContext.from_defaults(graph_store=graph_store)
     #documents = SimpleDirectoryReader("./pdf/").load_data()
     documents = SimpleDirectoryReader(
-        input_files=["./pdf/Auth_REST_api.pdf"] # Укажи точное имя файла
+        input_files=["./data/pdf/Auth_REST_api.pdf"] 
     ).load_data()
     start = timeit.default_timer()
     # perform kg generation
@@ -65,7 +67,7 @@ except FileNotFoundError as e:
         property_graph_store=graph_store,
     )
     kg_gen_time = timeit.default_timer() - start # seconds
-    gstorage_context.persist(persist_dir="./storage_n4")
+    gstorage_context.persist(persist_dir="./data/storage_n4")
     print(f'KG generation completed in: {datetime.timedelta(seconds=kg_gen_time)}')
 
 kg_keyword_query_engine = kg_index.as_query_engine(
