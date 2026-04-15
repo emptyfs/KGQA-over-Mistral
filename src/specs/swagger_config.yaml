@@ -1,0 +1,64 @@
+openapi: 3.1.0
+
+info:
+  title: Сервис KGQA на основе Mistral
+  version: 0.0.0
+
+tags:
+  - name: Neo4j
+    description: Эндпоинты для работы с БД
+  - name: Mistral
+    description: Эндпоинты для работы с моделью QA
+
+paths:
+  /api/v1/graph:
+    get:
+      tags:
+        - Neo4j
+      summary: Вернуть ГЗ
+      description: |
+        Вернуть текущее состояние графа знаний для визуализации
+
+    delete:
+      tags:
+        - Neo4j
+      summary: Очистить ГЗ
+      description: |
+        Полная очистка базы данных Neo4j
+
+  /api/v1/export:
+    get:
+      tags:
+        - Neo4j
+      summary: Экспорт ГЗ
+      description: |
+        Экспорт ГЗ из БД в JSON
+  
+  /api/v1/import:
+    post:
+      tags:
+        - Neo4j
+      summary: Импорт ГЗ
+      description: |
+        Иморт ГЗ в БД
+
+  /api/v1/documents/ingest:
+    post:
+      tags:
+        - Mistral
+      summary: Построить ГЗ из PDF, добавить его в БД
+      description: | 
+        Загрузка PDF, извлечение сущностей через Mistral и запись в Neo4j
+
+  /api/v1/query/analyze:
+    post:
+      tags:
+        - Mistral
+      summary: Получить ответ на вопрос на естественном языке. Вопросы передаются как массив строк
+      description: |
+        Объект, содержащий не только ответ на естественном язык и логи с БД (какие Cypher-запросы делал Mistral, какие узлы нашел - для визуализации процесса рассуждения)
+
+  
+  
+  
+      
