@@ -1,15 +1,13 @@
 import uvicorn
-import aiohttp
 
-from fastapi import FastAPI, Body, HTTPException
+from fastapi import FastAPI, Body, HTTPException, UploadFile, File, BackgroundTasks
 from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from dotenv import dotenv_values
 from pathlib import Path
 from contextlib import asynccontextmanager
 
-from services.proxy_service import proxy_fetch
-from models.request_models import ProxyRequest
+from controller.mistral import Mistral
 
 BASE_DIR = Path(__file__).parent 
 config = dotenv_values(BASE_DIR / "settings.env")
@@ -18,10 +16,10 @@ TITLE = config.get("PACKAGE_NAME")
 URL = config.get("URL")
 
 async def startup(app: FastAPI):
-    app.state.session = aiohttp.ClientSession()
+    app.state.mistral = Mistral(config)
 
 async def shutdown(app: FastAPI):
-    await app.state.session.close()
+    pass
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -48,6 +46,19 @@ async def spec():
 async def docs():
     return FileResponse(BASE_DIR / "templates" / "swagger.html")
 
+@app.post("/api/v1/documents/ingest")
+async def docs_ingest(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
+    content = await file.read()
+
+    background_tasks.add_task(
+        app.state.mistral.build_knowledge_graph,
+        content,
+        file.filename
+    )
+
+    return {
+        "status": "processing"
+    }
 
 
 

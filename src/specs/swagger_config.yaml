@@ -49,6 +49,25 @@ paths:
       summary: Построить ГЗ из PDF, добавить его в БД
       description: | 
         Загрузка PDF, извлечение сущностей через Mistral и запись в Neo4j
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Задача обработки запущена
+          content:
+            application/json:
+              example:
+                status: processing
 
   /api/v1/query/analyze:
     post:

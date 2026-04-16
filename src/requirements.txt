@@ -3,6 +3,7 @@ llama-index-core==0.14.20
 llama-index-llms-llama-cpp==0.6.0
 llama-index-embeddings-huggingface==0.7.0
 llama-index-graph-stores-neo4j==0.7.0
+llama-index-readers-file==0.6.0
 
 aiohttp==3.9.0
 fastapi==0.110.0
