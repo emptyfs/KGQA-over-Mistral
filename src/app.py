@@ -61,32 +61,6 @@ async def docs_ingest(background_tasks: BackgroundTasks, file: UploadFile = File
     }
 
 
-
-"""
-@app.post("/takawaenga")
-async def proxy(request_body: ProxyRequest = Body(...)):
-    url = f"{URL}{request_body.endpoint}" if request_body.endpoint else URL
-    method = request_body.method if request_body.method else "GET"
-
-    try:
-        response = await proxy_fetch(
-            session=app.state.session,
-            url=url,
-            method=method.upper(),
-            params=request_body.query,
-            json=request_body.body
-        )
-
-        content_bytes = response["content"]
-        status = response["status_code"]
-        headers = response["headers"]
-
-        return Response(content=content_bytes, status_code=status, headers=headers)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Unexpected error: {e}")
-"""
-
-
 if __name__ == "__main__":
 
     host = "0.0.0.0"
