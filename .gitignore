@@ -1,6 +1,7 @@
 venv/
 data/models/*.gguf
 data/storage_n4/
+data/pdf
 __pycache__/
 *.pyc
 *.pyo
