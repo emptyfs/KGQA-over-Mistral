@@ -15,14 +15,14 @@ services:
         environment:
             - NEO4J_PLUGINS=["apoc"] 
             - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
-            - NEO4J_AUTH=neo4j/password
+            - NEO4J_AUTH=${NEO4J_USER}/${NEO4J_PASSWORD} 
             - NEO4J_apoc_export_file_enabled=true
             - NEO4J_apoc_import_file_enabled=true
             - NEO4J_apoc_uuid_enabled=true
             - NEO4J_dbms_security_procedures_unrestricted=jwt.security.*,apoc.*
             - NEO4J_apoc_import_file_use__neo4j__config=true
-        volumes:
-            - ./data/my_neo4j_exports:/var/lib/neo4j/import
+        #volumes:
+        #    - ./data/my_neo4j_exports:/var/lib/neo4j/import
         restart: always
         healthcheck:
             test: wget http://localhost:7474 || exit 1

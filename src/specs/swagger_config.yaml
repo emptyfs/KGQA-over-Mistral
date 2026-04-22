@@ -1,0 +1,104 @@
+openapi: 3.1.0
+
+info:
+  title: Сервис KGQA на основе Mistral
+  version: 1.0.0
+
+tags:
+  - name: Neo4j
+    description: Эндпоинты для работы с БД
+  - name: Mistral
+    description: Эндпоинты для работы с моделью QA
+
+paths:
+  /api/v1/graph:
+
+    delete:
+      tags:
+        - Neo4j
+      summary: Очистить ГЗ
+      description: |
+        Полная очистка базы данных Neo4j
+
+  /api/v1/documents/ingest:
+    post:
+      tags:
+        - Mistral
+      summary: Построить ГЗ из PDF, добавить его в БД
+      description: | 
+        Загрузка PDF, извлечение сущностей через Mistral и запись в Neo4j
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Задача обработки запущена
+          content:
+            application/json:
+              example:
+                status: processing
+
+  /api/v1/documents/ingest/status/{task_id}:
+    get:
+      tags:
+        - Mistral
+      summary: Статус задачи загрузки документа
+      description: |
+        Получает текущий прогресс обработки задачи по её идентификатору.
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Идентификатор задачи загрузки документа
+      responses:
+        "200":
+          description: Текущий прогресс задачи
+          content:
+            application/json:
+              example:
+                task_id: "12345"
+                status: processing
+                progress: 65
+        "404":
+          description: Задача не найдена
+          content:
+            application/json:
+              example:
+                detail: "Task not found"
+
+  /api/v1/query/analyze:
+    post:
+      tags:
+        - Mistral
+      summary: Получить ответ на вопрос на естественном языке. Вопрос передается как строка.
+      description: |
+        Объект, содержащий не только ответ на естественном языке, но и контекст - части исходного текста, соответствующие вершинам и ребрам в графе, которые были использованы для генерации ответа.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: string
+            example: "Which HTTP header must be included in all subsequent API requests after authentication?"
+      responses:
+        "200":
+          description: Успешный ответ с анализом вопроса
+          content:
+            application/json:
+              example:
+                answer: "Ответ на вопрос на естественном языке"
+  
+  
+  
+      
