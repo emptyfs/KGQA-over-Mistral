@@ -4,7 +4,7 @@
 - Linux (debian)
 - Python3.11
 - Docker
-- Модель 
+- Модель https://drive.google.com/file/d/1crH5uLyE-_PKpm3hWOSDU4NZ5z1f98Wh/view?usp=sharing
 
 ## FAQ
 - Документация доступна по endpoint-у **/swagger_spec**
@@ -15,7 +15,7 @@
 
 Все команды запускать из корня проекта
 
-1) Скачать модель, положить в проект по пути **/data/models/**
+1) Скачать модель https://drive.google.com/file/d/1crH5uLyE-_PKpm3hWOSDU4NZ5z1f98Wh/view?usp=sharing, положить в проект по пути **/data/models/**
 
 2) 
 ```bash
